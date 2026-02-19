@@ -62,11 +62,8 @@ Be sure that the title, x-axis, and y-axis labels are clearly labeled.
 **Answer 1:**
 
 ```{r}
-#sunapee <- rename(sunapee, ice_off_day = ice_off_doy)
-
-
 sunapee |>
-  ggplot(aes(x = year, y = as.integer(ice_off_day))) +
+  ggplot(aes(x = year, y = as.integer(ice_off_doy))) +
   geom_point() +
   geom_line() +
   theme_classic() +
@@ -85,18 +82,21 @@ What do you expect the sign (plus, minus, or no change) to be for the slope of t
 
 **Answer 2:**
 
+Negative! The ice is melting earlier and earlier as the years progress, so the day of year value is descreasing as the years increase; it's an inverse relantionship.
+
 Use the `lm` function to predict `ice_off_doy` as a function (`~`) of the year for the data.frame called `sunapee`. You can learn more about the `lm` function [here](https://www.datacamp.com/tutorial/linear-regression-R)
 
 Create an object called `fit` that contains the results of the linear model.
 
 ```{r}
+fit <- lm(data = sunapee, ice_off_doy ~ year)
 
 ```
 
 Then, use the function `summary` to explore the result of the `lm` function.
 
 ```{r}
-
+summary(fit)
 ```
 
 The results of your linear model are in an object named `fit`, so you can find the regression coefficients at `fit$coefficients[1]` (the intercept) and `fit$coefficients[2]` (the slope). Confirm that `fit$coefficients[1]` and `fit$coefficients[2]` match the values expected from the summary command you ran above.
