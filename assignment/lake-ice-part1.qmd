@@ -34,7 +34,7 @@ df <- read_excel(file_name, sheet = "data")
 Now, look at a preview of the data using the `head()` function. The `doy` in `ice_off_doy` stands for "day of the year" and is the day within the year where ice off occurred (January 1 = doy 1).  `did_not_freeze` is a column where 1 = did not freeze and 0 = did freeze.
 
 ```{r}
-
+head(df)
 ```
 
 There should be four columns and \~2703 rows.
@@ -44,6 +44,8 @@ There should be four columns and \~2703 rows.
 We will practice key skills in the module using a focal lake. Use the `filter` function to filter the more extensive data to only contain the data from Lake Sunapee, a lake in New Hampshire. Filter the data `ice_data` by the variable `lake_name` to create a data frame called `sunapee`.
 
 ```{r}
+sunapee <- df |>
+  filter(lake_name == "Sunapee")
 
 ```
 
@@ -60,6 +62,16 @@ Be sure that the title, x-axis, and y-axis labels are clearly labeled.
 **Answer 1:**
 
 ```{r}
+#sunapee <- rename(sunapee, ice_off_day = ice_off_doy)
+
+
+sunapee |>
+  ggplot(aes(x = year, y = as.integer(ice_off_day))) +
+  geom_point() +
+  geom_line() +
+  theme_classic() +
+  labs(x = "Year", y = "Ice Off Day", title = "Lake Sunapee Ice Off Days 1869-2025") +
+  scale_y_continuous()
 
 ```
 
