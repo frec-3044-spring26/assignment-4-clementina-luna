@@ -194,6 +194,8 @@ Based on the `summary()` above, what is the p-value for the slope?
 
 **Answer 7:**
 
+ 2.504e-09
+
 ## The slope physically meaningful
 
 A slope value could have a low probability of being 0 (thus we have a strong belief that it is not zero), but the magnitude of change is functionally meaningless in the physical world (i.e., the rate of change is so small that we would not think much of it). This can occur particularly when analyzing large datasets.
@@ -204,6 +206,8 @@ Based on the slope value, how many more years are needed to pass before the lake
 
 **Answer 8:**
 
+1 week, which I believe is meaningful. That's only a couple decades before a whole month earlier, which is undoubtedly a significant environmental change, impacting any phenological timeline like crops, transport, hibernation, or dormancy. 
+
 ## Overall model assessment
 
 **Question 9:**
@@ -211,6 +215,8 @@ Based on the slope value, how many more years are needed to pass before the lake
 How comfortable are you proceeding with using this linear model for additional analysis and prediction? Why? (I am not looking for your gut answer, rather I want you to apply concepts taught in this module to justify your answer)
 
 **Answer 9:**
+
+The model confirms the existence and direction of the change, which is useful and important, but the skewed distribution of the residuals and low r-squared value indicate that the linear model might not best reflect the pattern—so I don't think it can be used with any precision. 
 
 **Question 10:**
 Now plot the data for Lake Sunapee (just like above - year on x-axis vs. ice of doy on y axis) but add the line from your regression results (e.g., fit intercept and slope). You will use the [`geom_abline`](https://ggplot2.tidyverse.org/reference/geom_abline.html). 
