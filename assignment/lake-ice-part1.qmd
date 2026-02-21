@@ -62,13 +62,13 @@ Be sure that the title, x-axis, and y-axis labels are clearly labeled.
 **Answer 1:**
 
 ```{r}
+sunapee <- mutate(sunapee, ice_off_doy = as.integer(ice_off_doy))
 sunapee |>
-  ggplot(aes(x = year, y = as.integer(ice_off_doy))) +
+  ggplot(aes(x = year, y = ice_off_doy)) +
   geom_point() +
   geom_line() +
   theme_classic() +
-  labs(x = "Year", y = "Ice Off Day", title = "Lake Sunapee Ice Off Days 1869-2025") +
-  scale_y_continuous()
+  labs(x = "Year", y = "Ice Off Day", title = "Lake Sunapee Ice Off Days 1869-2025") 
 
 ```
 
@@ -112,6 +112,8 @@ What is the direction of the slope? How does this match your expectations from Q
 
 **Answer 3:**
 
+Negative and it matches my expectations, it represents ice off starting earlier by one day each year. 
+
 # Is our model any good?
 
 ## R2
@@ -123,6 +125,8 @@ First, it is important to understand how much variation is explained by the mode
 What is the R2 for the regression? Based on the R2, is `year` and `ice_off_doy` strongly related?
 
 **Answer 4:**
+
+The r-squared value for the Sunapee regression is 0.2055 which doesn't  indicate a very strong relation, but might be okay-ish for ecology.
 
 ## Residuals normally distributed
 
@@ -154,6 +158,9 @@ Use the [`add_predictions()`](https://modelr.tidyverse.org/reference/add_predict
 **Answer 5:**
 
 ```{r}
+library(modelr)
+sunapee <- add_residuals(sunapee, fit)
+sunapee <- add_predictions(sunapee, fit)
 
 ```
 
@@ -163,9 +170,16 @@ Now, to visualize the residuals, use `geom_histogram()` to plot them as a histog
 
 Show Histogram and answer the following question: do the residuals meet the assumptions of the linear regression? (are the residuals normally distributed with the distribution centered around zero)?
 
+The data is slightly left-skewed; it has more low outliers than high outliers, however, it still follows a bell-shaped curve with its peak near zero, with another exception at around -5. I would say its generally meeting the normal distribution assumption.
+
 **Answer 6:**
 
 ```{r}
+sunapee |>
+  ggplot(aes(resid)) + 
+  geom_histogram(color = 'purple4', fill = 'purple') +
+  theme_bw() +
+  labs(x = "Residual Value", y = "Count", title = "Sunapee Lake Linear Model Residuals ")
 
 ```
 
