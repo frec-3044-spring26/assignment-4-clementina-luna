@@ -20,6 +20,7 @@ For some reason, `read_excel()` does not like relative paths, so we will use the
 ```{r}
 #install.packages("here")
 library(here)
+library(tidyverse)
 file_name <- file.path(here(),"data/lake_ice_off_data.xlsx")
 ```
 
@@ -44,8 +45,7 @@ There should be four columns and \~2703 rows.
 We will practice key skills in the module using a focal lake. Use the `filter` function to filter the more extensive data to only contain the data from Lake Sunapee, a lake in New Hampshire. Filter the data `ice_data` by the variable `lake_name` to create a data frame called `sunapee`.
 
 ```{r}
-sunapee <- df |>
-  filter(lake_name == "Sunapee")
+sunapee <- filter(df, lake_name == "Sunapee")
 
 ```
 
@@ -170,14 +170,14 @@ Now, to visualize the residuals, use `geom_histogram()` to plot them as a histog
 
 Show Histogram and answer the following question: do the residuals meet the assumptions of the linear regression? (are the residuals normally distributed with the distribution centered around zero)?
 
-The data is slightly left-skewed; it has more low outliers than high outliers, however, it still follows a bell-shaped curve with its peak near zero, with another exception at around -5. I would say its generally meeting the normal distribution assumption.
+The data is slightly left-skewed; it has more negative  outliers than positive outliers, however, it still follows a bell-shaped curve with its peak near zero. I would say its generally meeting the normal distribution assumption.
 
 **Answer 6:**
 
 ```{r}
 sunapee |>
   ggplot(aes(resid)) + 
-  geom_histogram(color = 'purple4', fill = 'purple') +
+  geom_histogram(color = 'purple4', fill = 'purple', binwidth = 10) +
   theme_bw() +
   labs(x = "Residual Value", y = "Count", title = "Sunapee Lake Linear Model Residuals ")
 
@@ -206,7 +206,7 @@ Based on the slope value, how many more years are needed to pass before the lake
 
 **Answer 8:**
 
-1 week, which I believe is meaningful. That's only a couple decades before a whole month earlier, which is undoubtedly a significant environmental change, impacting any phenological timeline like crops, transport, hibernation, or dormancy. 
+70 years, if it changes by 0.1 days every year. I think that ice melting one week earlier is a significant environmental change, impacting any phenological timeline like crops, transport, hibernation, or dormancy. However, it might be happening slow enough that these processes can adjust. 
 
 ## Overall model assessment
 
@@ -223,6 +223,13 @@ Now plot the data for Lake Sunapee (just like above - year on x-axis vs. ice of 
 
 **Answer 10:**
 ```{r}
+sunapee |>
+  ggplot(aes(x = year, y = ice_off_doy)) +
+  geom_point() +
+  geom_line() +
+  geom_abline(intercept = fit$coefficients[1], slope = fit$coefficients[2], color = 'red') +
+  theme_bw() +
+  labs(x = "Year", y = "Ice Off Day of Year", title = "Lake Sunapee Ice Off Day 1869-2025")
 
 ```
 
@@ -238,8 +245,16 @@ The goal of this question is to make a forecast of the future ice-off day (with 
 **Answer 11:**
 
 ```{r}
+y <- (fit$coefficients[2] * 2040) + fit$coefficients[1]
+#102.66
+
+low <- quantile(sunapee$resid, 0.05) #-19.43
+high <- quantile(sunapee$resid, 0.95) # 14.15
+
+c(y + low, y + high)
 
 ```
+The ice off day of year prediction for 2040 is 103 with a 34 day confidence interval (83-117). 
 
 # Is the ice-off day of the year changing more quickly in more recent years at Lake Sunapee?
 
@@ -252,6 +267,31 @@ Use the skills developed above to evaluate the question "Is the ice-off day of y
 **Answer 12:**
 
 Use a mix of code, figures, and text to present your analysis.  If you want to compare slopes, be sure they are on the same plot.
+
+```{r}
+
+set1 <- filter(sunapee, year < 1970)
+  
+set2 <- filter(sunapee, year >= 1970)
+
+fit1 <- lm(data = set1, ice_off_doy ~ year)
+  
+fit2 <- lm(data = set2, ice_off_doy ~ year)
+
+sunapee |>
+  ggplot(aes(x = year, y = ice_off_doy)) +
+  geom_point()+
+  geom_line()+
+  geom_abline(intercept = fit1$coefficients[1], slope = fit1$coefficients[2], color = 'orange') +
+  geom_abline(intercept = fit2$coefficients[1], slope = fit2$coefficients[2], color = 'red') +
+  theme_classic() +
+  labs(x = "Year", y = "Ice Off Day", title = "Ice Off Day over Time")
+
+fit1$coefficients[2]
+fit2$coefficients[2]
+
+```
+The linear model fitted to the later section (years 1970 and after) has a slope of a greater negative magnitude than the slope for the years before, it also has a greater magnitude than the slope calculated for the entire dataset. So, the rate of change of the slope itself is negative, the trend is accelerating. 
 
 # Rendering and committing
 
